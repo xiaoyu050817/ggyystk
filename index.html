@@ -42034,6 +42034,7 @@ function startQuiz(mode, questionIds = null, resumeProgress = true, module = nul
     }
 
     AppState.quizMode = mode;
+    AppState.isWrongQuiz = !!questionIds;  // 标记是否是错题练习
     AppState.currentQuestionIndex = 0;
     AppState.selectedAnswers = {};
     AppState.answeredQuestions = new Set();
@@ -42798,8 +42799,13 @@ function finishQuiz() {
             </div>
         </div>
         <div class="modal-footer">
-            <button class="btn-secondary" onclick="closeModal();navigateTo('home')">返回首页</button>
-            <button class="btn-primary" onclick="closeModal();startQuiz('${AppState.quizMode}')">再来一组</button>
+            ${AppState.isWrongQuiz ? `
+                <button class="btn-secondary" onclick="closeModal();navigateTo('wrong');renderWrongPage()">返回错题集</button>
+                <button class="btn-primary" onclick="closeModal();startWrongQuizAgain()">再来一组</button>
+            ` : `
+                <button class="btn-secondary" onclick="closeModal();navigateTo('home')">返回首页</button>
+                <button class="btn-primary" onclick="closeModal();startQuiz('${AppState.quizMode}')">再来一组</button>
+            `}
         </div>
     `);
 }
@@ -43353,6 +43359,17 @@ function removeWrongQuestion(id) {
     AppState.removeWrongId(id);
     showToast('已从错题集移除', 'success');
     renderWrongPage();
+}
+
+// 错题集内部再来一组：重新获取错题列表并开始练习
+function startWrongQuizAgain() {
+    const wrongIds = AppState.getWrongIds();
+    if (wrongIds.length === 0) {
+        showToast('暂无错题，去练习吧', 'info');
+        navigateTo('home');
+        return;
+    }
+    startQuiz('sequential', wrongIds);
 }
 
 // ==================== 考试记录页面 ====================
