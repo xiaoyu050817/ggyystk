@@ -907,7 +907,12 @@ svg {
 
 .quiz-option.wrong {
     border-color: var(--error);
-    background: var(--error-bg);
+    background: var(--error);
+    color: white;
+}
+
+.quiz-option.wrong .option-content {
+    color: white;
 }
 
 .quiz-option.disabled {
@@ -1015,6 +1020,13 @@ svg {
 
 .correct-answer-text {
     color: var(--success);
+    font-weight: 700;
+    font-size: 16px;
+    letter-spacing: 1px;
+}
+
+.wrong-answer-text {
+    color: var(--danger, #ef4444);
     font-weight: 700;
     font-size: 16px;
     letter-spacing: 1px;
