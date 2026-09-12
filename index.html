@@ -42167,7 +42167,7 @@ function renderQuizPage() {
             answerHtml = `
                 <div class="subjective-answer-area" style="margin-top:20px;">
                     <div style="font-weight:600;color:#374151;margin-bottom:10px;">
-                        请作答${question.type}（${questionScore}分）：
+                        请作答：
                     </div>
                     <textarea 
                         id="subjectiveAnswer_${question.id}"
@@ -42186,7 +42186,7 @@ function renderQuizPage() {
             answerHtml = `
                 <div class="subjective-answer-area" style="margin-top:20px;">
                     <div style="font-weight:600;color:#374151;margin-bottom:10px;">
-                        您的答案（${questionScore}分）：
+                        您的答案：
                     </div>
                     <div style="padding:15px;background:#f9fafb;border-radius:8px;line-height:1.8;white-space:pre-wrap;min-height:80px;">
                         ${userAnswer || '（未作答）'}
@@ -42352,12 +42352,29 @@ function renderQuizPage() {
             correctAnswerText = correctAnswer;
         }
 
-        // 背题模式显示正确答案具体选项，其他模式显示你的答案
+        // 格式化用户答案显示
+        let userAnswerText = '';
+        if (selected) {
+            if (Array.isArray(selected)) {
+                userAnswerText = selected.join('、');
+            } else {
+                userAnswerText = selected;
+            }
+        } else {
+            userAnswerText = '未作答';
+        }
+
+        // 背题模式显示正确答案具体选项，其他模式显示你的答案和正确答案
         let answerDetailHtml = '';
         if (isReviewMode) {
             answerDetailHtml = `<div class="feedback-answer"><strong>正确答案：</strong><span class="correct-answer-text">${correctAnswerText}</span></div>`;
-        } else if (!isCorrect) {
-            answerDetailHtml = `<div class="feedback-answer"><strong>正确答案：</strong><span class="correct-answer-text">${correctAnswerText}</span></div>`;
+        } else {
+            // 显示用户的答案
+            answerDetailHtml = `<div class="feedback-answer"><strong>你的答案：</strong><span class="${isCorrect ? 'correct-answer-text' : 'wrong-answer-text'}">${userAnswerText}</span></div>`;
+            // 如果回答错误，同时显示正确答案
+            if (!isCorrect) {
+                answerDetailHtml += `<div class="feedback-answer"><strong>正确答案：</strong><span class="correct-answer-text">${correctAnswerText}</span></div>`;
+            }
         }
 
         feedbackHtml = `
